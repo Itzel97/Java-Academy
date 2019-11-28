@@ -1,0 +1,277 @@
+create database IAAcademy;
+show databases;
+
+use mydb;
+SELECT *
+FROM city
+WHERE city_id < 150
+AND state_id > 15;
+
+use mydb;
+SELECT *
+FROM state
+WHERE description LIKE '%ch%'
+OR state_id between 1 AND 10;
+
+use mydb;
+SELECT item_id, description,uom_id
+FROM item
+WHERE description LIKE 'Sams%'
+AND uom_id = 'pce';
+
+use mydb;
+SELECT item_id,description, unit_price
+FROM item
+WHERE unit_price between 1500 and 7500
+and item_id in (2,6,20,28,40,45,60,70);
+
+use mydb;
+SELECT uom_id, unit_price
+FROM item
+WHERE unit_price < 500;
+
+use mydb;
+SELECT uom_id, unit_price
+FROM item
+WHERE unit_price < 500
+GROUP BY uom_id, unit_price
+ORDER BY uom_id,unit_price DESC;
+
+use mydb;
+SELECT item_id, COUNT(cart_id) AS total_carts,
+SUM(quantity) AS total_items,
+AVG(quantity) AS items_by_cart
+FROM cart_line
+GROUP BY item_id
+ORDER BY item_id;
+
+
+use mydb;
+SELECT cart_id, SUM(quantity) AS total_items
+FROM cart_line
+group by cart_id 
+having sum(quantity) > 4 
+order by cart_id;
+
+-- Get the number of carts by ShipTo and Status from Carts "NOT-CANCELED" and the 50%
+-- of sum of cart_amount on each group is greater than $4,000
+ use mydb;
+ Select ship_to_id, status_id, SUM(cart_amount) AS cart_amt_sum, count(cart_id) as count_of_carts
+ from cart
+ WHERE status_id != 1400
+ GROUP BY ship_to_id, status_id
+ HAVING  cart_amt_sum/2 > 4000
+ order by ship_to_id;
+
+-- STRING FUNCTIONS--
+use mydb;
+SELECT item_id, CONCAT(uom_id,'_',description) as descr
+from item
+where length(description) < 25;
+
+-- GET the first 25 characters of description Items.
+use mydb;
+ select item_id, if(length(description) > 25, concat(substr(description,1,25), '...'),
+ description) as description
+ from item ;
+ 
+ -- DATE FUNCTIONS --
+ 
+ use mydb;
+ select order_id
+ ,date_format(order_date,'%Y-%m-%d') as order_date
+ ,date_format(schedule_date,'%Y-%m-%d') AS schedule_date
+ ,date_format(delivery_date,'%Y-%m-%d') AS delivery_date
+ ,datediff(schedule_date, delivery_date) as delivery_span
+ ,if(datediff(schedule_date, delivery_date)>= 0, 'Y', 'N') AS ontime_delivery
+ from orders
+ where status_id in (2300,2350)
+ and order_date > date_add(current_date(), interval -7 year);
+ 
+-- ACTIVITY 1 AND 2 --
+use mydb;
+select item_id, description, features
+from item
+where description like '%set%'
+and unit_price between 500 and 23000;
+
+use mydb;
+select ship_to_id,count(cart_amount) as carts
+from cart
+where status_id != 3100
+group by  ship_to_id
+order by ship_to_id;
+
+-- numero 3--
+-- get the minimum_line_amount per order from Orderline where status_id are among(3100,3300)
+-- and the minimum_line_amount is grater than 1,500
+use mydb;
+select order_id, min(line_amount) as minimun_line_amount 
+from order_line
+where status_id between 3100 and 3300
+group by order_id
+having minimun_line_amount > 1500 ;
+
+-- Hola Itzel :)
+
+-- *********Ejercicio 1
+-- Orders
+-- 1-delivered
+-- 2-order_amount > $1000.00
+-- 3-ordenado 1-N (order_id)
+-- 4-order_id, order_amount, status_id
+select order_id, order_amount, status_id
+from orders
+while status_id in (select status_id
+where and order_amount > 1000 
+description (like 'delivered')
+order by order_id asc;
+-- no encontre el error :(, avanzamos de ejercicio..
+
+
+-- *********Ejercicio 2
+-- seleccione todos los items de la categoria Electronics(6)
+-- y despliege la informacion de la siguiente manera
+--  ______________________________________________________
+-- |item_id	| description | category_id | cat_description |
+-- -------------------------------------------------------
+
+select cat.item_id,(select description from item where item_id = cat.item_id) as
+description, cat.category_id,(select description from category where category_id = cat.category_id) as
+category_description from category_item as cat where category_id=6;
+-- tampoco me saló, me lleva.. :( 
+
+
+-- ***********Ejercicio 3 (aqui ya vemos JOINS)
+-- DAY 5 JOINS --
+use mydb;
+select u.username, u.name, u.user_role_id, ur.description
+FROM user as u
+left join user_role as ur ON u.user_role_id = ur.user_role_id
+where u.user_role_id is null;
+
+
+-- ejercicio --
+use mydb;
+select u.username
+		,u.name user
+        ,ur.user_role_id
+        ,ur.description user_role
+        ,st.ship_to_id
+        ,st.name ship_to
+        ,st.address
+        ,st.city_id
+        ,c.description
+from user u 
+inner join user_role ur ON u.user_role_id = ur.user_role_id
+inner join ship_to st ON u.username = st.user
+inner join city c on  c.city_id = st.city_id ;
+
+
+-- otro ejercicio --
+use mydb;
+select c.city_id
+,c.description city
+,s.description
+,sz.*
+from city c
+inner join state s on c.state_id = s.state_id
+inner join shipping_zone sz on s.shipping_zone_id = sz.shipping_zone_id
+where c.description LIKE '%ca%'
+and shipping_cost > 50;
+
+--  LEFT JOIN create a report from cart created in 2015, their status and their order_date uf they have.
+-- order the result bu cart_id.
+use mydb;
+select c.cart_id
+	   ,c.create_date
+       ,s.description cart_status
+       ,o.order_id
+       ,o.order_date
+from cart c
+inner join status s on c.status_id = s.status_id
+left join orders o on c.cart_id = o.cart_id
+where date_format(c.create_date,'%Y') = '2015'
+order by cart_id;
+
+-- RIGT JOIN coint cities by states including sates that don't have any city , order the results by 
+-- number of cities.
+select s.*
+,count(c.city_id) cities
+from city c
+right join state s on c.state_id = s.state_id
+group by s.state_id
+order by cities, s.state_id;
+
+select s.state_id, s.description
+from city c
+right join state s on c.state_id = s.state_id
+where c.state_id is null;
+
+-- get the number of carts by ship to and status, from carts CREATED  and DELIVERED
+-- and wich the average of cart_amount on each group is between 3,000 and 15,000
+-- include the relecant description of shipto and status.
+select *
+from status;
+
+select  c.ship_to_id, st.name ,c.status_id, s.description, avg(c.cart_amount) as avg_carts,
+count(c.cart_id) as count_cart
+from cart as  c
+join ship_to as st on c.ship_to_id = st.ship_to_id
+join status as s on s.status_id = c.status_id
+where c.status_id in (1100,1300) 
+group by c.ship_to_id, c.status_id
+having avg_carts between 3000 and 15000;
+
+
+-- get the number of items by category and uom sort the result by category 
+-- and then by uom.
+
+
+select c.description, i.uom_id,count(i.item_id) as items
+from category_item as ci
+inner join category as c on c.category_id = ci.category_id
+inner join item as i on ci.item_id = i.item_id
+group by c.category_id,i.uom_id
+order by c.category_id;
+
+
+-- Based on the previously provided ERD, create a query that returns the minimum,
+-- maximum and average quantity of items of any kind placed in carts in CREATED status. 
+-- (Hint: 1 row is returned)
+-- en cart_line estan cart_line_id, cart_id, item_id, quantity.
+-- en cart estan cart_id,status_id aqui lo usaremos para ver quieres estan enc reated
+-- en item_id estan item_id
+USE MYDB;
+select*
+from cart_line;
+
+select C.cart_id, C.status_id, min(cl.item_id) as min_items, max(cl.item_id) as max_items
+, avg(cl.item_id) as avg_items
+from cart as C
+inner join cart_line AS cl on cl.cart_id = C.cart_id
+where C.status_id in (1100)
+group by C.cart_id,C.status_id;
+
+-- Based on the previously provided ERD, create a query that 
+-- extracts all Items that don't have any Order Lines.
+-- Display the UOM description for each. (Hint: 38 rows 
+-- are returned)
+ select*
+ from order_line;
+ 
+select ol.order_line_id, ol.order_id ,i.item_id,i.uom_id
+from  item as i
+inner join order_line as ol on ol.item_id = i.item_id
+where ol.item_id = i.item_id;
+
+-- based on the previously provided ERD, create a query 
+-- that returns the average Order Amount per Payment Type
+-- for all canceled orders. (Hint: 3 rows are returned)
+
+select *
+from orders;
+select avg(o.order_amount) as avg_order_amount, p.description ,o.cancellation_date
+from orders as o, payment_method as p
+where o.cancellation_date is not null
+group by o.order_id,p.payment_method_id;
