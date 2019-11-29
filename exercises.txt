@@ -1,0 +1,14 @@
+Exercise 
+Write a Java program to declare an integer variables, one float variable, and one string variable 
+and assign 10, 12.5, and "Java programming" to them respectively. Then display their values on the screen.
+
+Excercise
+Given two strings, a and b, return the result of putting them together in the order abba, e.g. 
+"Hi" and "Bye" returns "HiByeByeHi".
+
+makeAbba("Hi", "Bye") → "HiByeByeHi"
+makeAbba("Yo", "Alice") → "YoAliceAliceYo"
+makeAbba("What", "Up") → "WhatUpUpWhat"
+
+Exercise  
+Write a Java program to determine whether an input number is an even number.
