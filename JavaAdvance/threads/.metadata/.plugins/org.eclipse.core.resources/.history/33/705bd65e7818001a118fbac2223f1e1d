@@ -1,0 +1,22 @@
+package test;
+
+import java.io.File;
+
+public class EjercicioHimno implements HimnoAnalisis {
+	
+	public static void main (String [] args) {
+		
+		
+		File file= new File("C:\\Users\\curso\\Documents\\New folder\\threads\\ThreadsTest1\\src\\test\\himno.txt");
+		EjercicioHimno ej = new EjercicioHimno();
+		
+		
+		
+		Integer numeroCh = ej.countCharacters(file);
+		System.out.println("1.Numero de caracteres " + numeroCh);
+	}
+	
+	public Integer countCharacters(File file);
+		
+	}
+}

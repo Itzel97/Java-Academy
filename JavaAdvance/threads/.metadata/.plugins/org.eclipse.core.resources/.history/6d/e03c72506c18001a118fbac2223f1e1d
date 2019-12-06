@@ -1,0 +1,12 @@
+package hilos;
+
+public class ThreadExampleMain   {
+		
+	public static void main (String [] args) {
+		
+		ThreadExample hilo1 = new ThreadExample();
+		ThreadExample hilo2 = new ThreadExample("Hilo 1");
+		//ThreadExample hilo3 = new ThreadExample("Hilo 2");
+	}
+
+}

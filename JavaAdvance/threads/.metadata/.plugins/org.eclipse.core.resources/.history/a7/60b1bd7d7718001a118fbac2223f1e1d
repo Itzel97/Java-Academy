@@ -1,0 +1,11 @@
+package test;
+
+import java.io.File;
+
+public class EjercicioHimno {
+	
+	public static void main (String [] args) {
+		private Integer countCharacters(File file);
+	}
+
+}

@@ -1,0 +1,13 @@
+package test;
+
+import java.io.File;
+
+public interface HimnoAnalisis {
+	
+	
+		public static Integer countCharacters(File file);
+		public static Integer countWords( File file);
+		public
+	}
+
+}

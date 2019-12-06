@@ -1,0 +1,12 @@
+package test;
+
+import java.io.File;
+
+public interface HimnoAnalisis {
+	
+	
+		public  Integer countCharacters(File file);
+		public  Integer countWords( File file);
+		public 	Integer cuntLines (File file);
+	}
+

@@ -1,0 +1,16 @@
+
+public class ArithmeticException {
+	public static void main (String [] args) {
+		
+		
+		try {
+			int num1 = 30;
+			int num2 = 0;
+			int out= num1/num2;
+			System.out.println("Result = " + out);
+		} catch (ArithmetichException e) {
+			// TODO: handle exception
+			
+		}
+	}
+}
